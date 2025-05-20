@@ -1,24 +1,13 @@
-# Conan Starter Project
+# Game Template
 
-`conan-starter` is a starter project to easily get started to using conan. This is a template repository \
-that you can use.
+`game-template` is a game project template. This template is to be a project for quickly creating a game using TheAtlasEngine.
 
-## Conan Setup
+## Overview
 
-To get all of Engine3D packages, just run this conan command. To start using them.
+In this game template project because atlas does not have a project UI for automating this. This project provides you a game_world .hpp/.cpp file that contains the world. This is where you will add your scenes to that world
 
-```
-conan remote add engine3d-conan https://libhal.jfrog.io/artifactory/api/conan/engine3d-conan
-```
-
-## Build Starter
-
-Run this conan command to build the project with `-b missing` on the first build, so conan can install any missing dependencies.
-
-```
-conan build . -b missing
-```
+Each scene you create would be added into game_world. This way you can access it through the system_registry.
 
 ## Running the Starter
 
-Running the executable, `./build/Release/Starter`
+Running the executable, `./build/Release/game-template`

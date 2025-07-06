@@ -18,8 +18,6 @@
 
 class main_scene : public atlas::scene_scope {
 public:
-    main_scene() = default;
-
     main_scene(const std::string& p_tag);
 
     ~main_scene() override {
@@ -37,7 +35,8 @@ public:
     void on_physics_update();
 
 private:
-    atlas::ref<atlas::scene_object> m_sphere;
-    atlas::ref<atlas::scene_object> m_camera;
+    atlas::optional_ref<atlas::scene_object> m_viking_room;
+    atlas::optional_ref<atlas::scene_object> m_platform;
+    atlas::optional_ref<atlas::scene_object> m_camera;
 
 };

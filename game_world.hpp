@@ -1,5 +1,6 @@
 #pragma once
 #include "main_scene.hpp"
+#include <core/scene/world.hpp>
 
 class game_world {
 public:

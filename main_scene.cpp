@@ -6,21 +6,44 @@
 
 main_scene::main_scene(const std::string& p_tag)
   : atlas::scene_scope(p_tag) {
-    console_log_info("scene_scope::scene_scope with Tag = {} called!", p_tag);
+
+    m_camera = create_object("camera");
+    auto aspect_ratio = atlas::application::aspect_ratio();
+    atlas::camera camera_comp = atlas::camera(aspect_ratio);
+    camera_comp.Position = {-1.1f, 6.53f, 23.32f};
+    camera_comp.IsMainCamera = true;
+
+    m_camera->set<atlas::camera>(camera_comp);
+
 
     //! @note Creating our objects from our scene
-    m_sphere = this->create_new_object("sphere");
+    m_viking_room = create_object("Viking Room Object");
+    atlas::transform sphere_transform = {
+        // .Position{0.f, 0.f, 1.60f},
+        .Position = {-2.70f, 2.70, -8.30f},
+        .Rotation = {2.30f, 95.90f, 91.80f},
+        .Scale{1.f},
+    };
+    m_viking_room->set<atlas::transform>(sphere_transform);
+    m_viking_room->set<atlas::material>({
+        .color = {1.f, 1.f, 1.f, 1.f},
+        .model_path = "assets/models/viking_room.obj",
+        .texture_path = "assets/models/viking_room.png"
+    });
 
-    m_sphere->set<atlas::rendertarget3d>(
-      atlas::rendertarget3d("assets/models/colored_cube.obj"));
+    m_platform = create_object("Platform");
 
-    //! @note Sets the sphere to it's default size
-    m_sphere->set<atlas::transform>({ .Position = { 0.f, 2.10f, -7.30f },
-                                      .Scale = { .20f, .20f, .20f },
-                                      .Color = { 1.0f, 1.f, 1.f, 1.f } });
+    m_platform->set<atlas::transform>({
+        // .Position = { 0.f, 1.40f, -7.4f },
+        // .Scale = { 2.80f, -0.08f, 3.50f },
+        .Scale = {15.f, -0.30f, 10.0f}
+    });
 
-    m_camera = this->create_new_object("camera");
-    m_camera->add<atlas::camera>();
+    m_platform->set<atlas::material>({
+        .color = {0.f, 1.f, 0.f, 1.f},
+        .model_path = "assets/models/cube.obj",
+        // .texture_path = "assets/models/wallace_gromit_image.jpg"
+    });
 
 
     sync(this, &main_scene::on_update);
@@ -48,22 +71,22 @@ main_scene::on_update() {
 
     if (atlas::event::is_key_pressed(key_w)) {
         // console_log_trace(""
-        camera->process_keyboard(atlas::Forward, delta_time);
+        camera->process_keyboard(atlas::forward, delta_time);
     }
     if (atlas::event::is_key_pressed(key_s)) {
-        camera->process_keyboard(atlas::Backward, delta_time);
+        camera->process_keyboard(atlas::backward, delta_time);
     }
     if (atlas::event::is_key_pressed(key_a)) {
-        camera->process_keyboard(atlas::Left, delta_time);
+        camera->process_keyboard(atlas::left, delta_time);
     }
     if (atlas::event::is_key_pressed(key_d)) {
-        camera->process_keyboard(atlas::Right, delta_time);
+        camera->process_keyboard(atlas::right, delta_time);
     }
     if (atlas::event::is_key_pressed(key_q)) {
-        camera->process_keyboard(atlas::Up, delta_time);
+        camera->process_keyboard(atlas::up, delta_time);
     }
     if (atlas::event::is_key_pressed(key_e)) {
-        camera->process_keyboard(atlas::Down, delta_time);
+        camera->process_keyboard(atlas::down, delta_time);
     }
 
     //! @note Press shift key to move using the mouse to rotate around

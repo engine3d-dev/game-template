@@ -27,7 +27,7 @@ class StarterConanRecipe(ConanFile):
         self.requires("stb/cci.20230920")
         self.requires("imguidocking/2.0")
         self.requires("joltphysics/5.2.0")
-        self.requires("atlas/0.1")
+        self.requires("atlas/0.2")
 
     def build(self):
         cmake = CMake(self)

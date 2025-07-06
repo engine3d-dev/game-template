@@ -40,9 +40,9 @@ main_scene::main_scene(const std::string& p_tag)
     });
 
     m_platform->set<atlas::material>({
-        .color = {0.f, 1.f, 0.f, 1.f},
+        .color = {1.f, 1.f, 1.f, 1.f},
         .model_path = "assets/models/cube.obj",
-        // .texture_path = "assets/models/wallace_gromit_image.jpg"
+        .texture_path = "assets/models/wallace_gromit_image.jpg"
     });
 
 
@@ -53,10 +53,15 @@ main_scene::main_scene(const std::string& p_tag)
 
 void
 main_scene::on_ui_update() {
+    atlas::transform* transform = m_platform->get_mut<atlas::transform>();
+    atlas::material* material = m_platform->get_mut<atlas::material>();
 
-    if (ImGui::Begin("Settings")) {
-        ImGui::End();
-    }
+    atlas::ui::draw_panel_component<atlas::material>("platform", [&](){
+        atlas::ui::draw_vec3("pos", transform->Position);
+        atlas::ui::draw_vec3("rotation", transform->Scale);
+        atlas::ui::draw_vec3("scale", transform->Rotation);
+        atlas::ui::draw_vec4("color", material->color);
+    });
 
 }
 

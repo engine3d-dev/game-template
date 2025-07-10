@@ -3,6 +3,7 @@
 #include <core/core.hpp>
 #include <core/scene/scene.hpp>
 #include <core/scene/scene_object.hpp>
+#include <physics/physics_3d/physics_engine.hpp>
 
 /**
  * @name LevelScene
@@ -26,9 +27,15 @@ public:
     //! @note Remove these from being overridden
     //! TODO: We should have an indication on what functions are update phased
     //! functions
+    void start();
+    void init();
     void on_update();
 
     void on_ui_update();
+
+    // Temporary
+    void runtime_start();
+    void runtime_stop();
 
     //! TODO: Remove this and integrate a few functions into LevelScene such as
     //! on_runtime_start/on_runtime_stop
@@ -37,6 +44,15 @@ public:
 private:
     atlas::optional_ref<atlas::scene_object> m_viking_room;
     atlas::optional_ref<atlas::scene_object> m_platform;
+    atlas::optional_ref<atlas::scene_object> m_platform2;
     atlas::optional_ref<atlas::scene_object> m_camera;
+    atlas::optional_ref<atlas::scene_object> m_physics_settings;
+    std::vector<std::vector<std::vector<atlas::strong_ref<atlas::scene_object>>>> m_spheres;
 
+    atlas::optional_ref<atlas::physics::physics_engine> engine;
+
+    std::pmr::polymorphic_allocator<> m_allocator_object;
+
+    bool is_runtime = false;
+    bool test_bool = false;
 };

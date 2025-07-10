@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 project(game-template CXX)
 
-
 build_application(
     SOURCES
     Application.cpp
@@ -20,5 +19,7 @@ build_application(
     Jolt::Jolt
     atlas::atlas
 )
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 generate_compile_commands()

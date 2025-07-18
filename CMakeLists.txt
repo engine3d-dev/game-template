@@ -3,7 +3,6 @@ project(game-template CXX)
 
 set(DATA assets/data)
 set(SCRIPTS assets/scripts)
-set(MODULES assets/modules)
 
 build_application(
     SOURCES
@@ -14,13 +13,11 @@ build_application(
     # Data
     ${DATA}/camera/editor_controls.hpp
 
-    # Physics
-    ${SCRIPTS}/physics/rigidbody.hpp
-    ${SCRIPTS}/physics/rigidbody.cpp
+    ${SCRIPTS}/experimental/data_management/schema_manager.cpp
+    ${SCRIPTS}/experimental/data_management/schema_manager.hpp
 
-    # Action Components
-    assets/modules/action_components/requirements.cpp
-    assets/modules/action_components/requirements.hpp
+    ${SCRIPTS}/experimental/data_management/schemas/schema.cpp
+    ${SCRIPTS}/experimental/data_management/schemas/schema.hpp
 
     PACKAGES
     spdlog

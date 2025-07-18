@@ -1,6 +1,6 @@
 #include "game_world.hpp"
 #include <core/engine_logger.hpp>
-#include <core/system_framework/system_registry.hpp>
+#include <core/system/registry.hpp>
 
 game_world::game_world() {
     console_log_fatal("Instantiate Default game_world!");

@@ -47,7 +47,6 @@ private:
     atlas::optional_ref<atlas::scene_object> m_platform2;
     atlas::optional_ref<atlas::scene_object> m_camera;
     atlas::optional_ref<atlas::scene_object> m_physics_settings;
-    std::vector<std::vector<std::vector<atlas::strong_ref<atlas::scene_object>>>> m_spheres;
 
     atlas::optional_ref<atlas::physics::physics_engine> engine;
 

@@ -1,7 +1,6 @@
 #include "main_scene.hpp"
 #include <assets/data/modules/core/core_module.hpp>
 #include <assets/modules/blaze_draco_editor/text_editor.hpp>
-#include <assets/scripts/experimental/data_management/schema_manager.hpp>
 #include <core/event/event.hpp>
 #include <core/filesystem/file_dialog.hpp>
 #include <core/scene/components.hpp>
@@ -21,8 +20,8 @@ main_scene::main_scene(const std::string &p_tag,
 
   ecs_script_run_file(*scene, "assets/flecs_scripting/buildings.flecs");
 
-  test_schema =
-      atlas::create_strong_ref<schema>(m_allocator_object, "test_schema");
+  // test_schema =
+  //     atlas::create_strong_ref<schema>(m_allocator_object, "test_schema");
 
   // Serializer is created and activated last.
   m_serializer = atlas::create_strong_ref<serializer>(m_allocator_object);

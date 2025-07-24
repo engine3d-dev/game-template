@@ -12,12 +12,9 @@ public:
   template <typename T> void add(flecs::world& p_world) {
     static_assert(std::is_class_v<T>, "Only struct types allowed.");
 
-    // Register a "parentless" component and get the id
     flecs::id_t component_id = p_world.id<T>();
     if (requirement_ids.insert(component_id).second) {
 
-      // &requirements::ensure_component<T> is needed because we don't want
-      // to bind the call to this class but instead treat like a static call.
       builders.emplace_back(&requirements::enforce_component<T>);
     }
   }

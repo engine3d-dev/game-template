@@ -21,16 +21,6 @@ build_application(
     ${SCRIPTS}/gui/ui_properties_panel.cpp
     ${SCRIPTS}/gui/ui_properties_panel.hpp
 
-
-    ${SCRIPTS}/experimental/data_management/schema_manager.cpp
-    ${SCRIPTS}/experimental/data_management/schema_manager.hpp
-
-    ${SCRIPTS}/experimental/data_management/schemas/schema.cpp
-    ${SCRIPTS}/experimental/data_management/schemas/schema.hpp
-
-    ${SCRIPTS}/experimental/data_management/parsing/schema_parser.cpp
-    ${SCRIPTS}/experimental/data_management/parsing/schema_parser.hpp
-
     PACKAGES
     spdlog
     flecs

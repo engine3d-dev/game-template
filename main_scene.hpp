@@ -5,7 +5,6 @@
 #include <core/scene/scene.hpp>
 #include <core/scene/scene_object.hpp>
 #include <assets/modules/serialization/serializer.hpp>
-#include <assets/scripts/experimental/data_management/schemas/schema.hpp>
 #include <physics/physics_3d/physics_engine.hpp>
 #include <assets/scripts/gui/ui_hierarchy.hpp>
 #include <assets/scripts/gui/ui_properties_panel.hpp>
@@ -64,8 +63,6 @@ private:
     atlas::optional_ref<atlas::ui_properties_panel> m_ui_properties = nullptr;
 
     atlas::optional_ref<ui_hierarchy> m_ui_hierarchy = nullptr;
-
-    atlas::optional_ref<schema> test_schema = nullptr;
 
     atlas::optional_ref<serializer> m_serializer = nullptr;
 

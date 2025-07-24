@@ -26,10 +26,10 @@ public:
   void set_world();
   void set_schema();
 
-void flush();
-void remove(const std::string &p_schema_name);
+  void flush();
+  void remove(const std::string &p_schema_name);
 
-void destruct();
+  void destruct();
 
 private:
   std::unordered_map<std::string, schema> schemas;

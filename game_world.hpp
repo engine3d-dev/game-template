@@ -1,6 +1,7 @@
 #pragma once
 #include "main_scene.hpp"
 #include <core/scene/world.hpp>
+#include <assets/modules/blaze_draco_editor/text_editor.hpp>
 
 class game_world {
 public:
@@ -10,4 +11,7 @@ public:
 private:
     atlas::ref<atlas::world_scope> m_main_world;
     atlas::ref<main_scene> m_first_scene;
+    atlas::optional_ref<text_editor> m_editor;
+
+    std::pmr::polymorphic_allocator<> m_allocator;
 };

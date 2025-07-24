@@ -1,0 +1,29 @@
+box {
+  transform
+  (user, object)
+	  
+  material:{
+   color:{x:1, y:1, z:1, w:1},
+   model_path:"assets/models/cube.obj", 
+   texture_path:"assets/models/viking_room.png"
+  }
+}
+
+
+
+box2 {
+  transform
+  (user, object)
+	  
+  material:{
+   color:{x:1, y:1, z:1, w:1},
+   model_path:"assets/models/cube.obj", 
+   texture_path:"assets/models/viking_room.png"
+  }
+}
+
+
+
+
+
+

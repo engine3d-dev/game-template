@@ -1,0 +1,21 @@
+atlas.tag.editor {}
+projection_view {}
+
+camera {
+  transform
+
+  (user, object)
+
+  "Perspective Camera": {
+    planes: {x: 0.1, y: 5000},
+    fov: 45, 
+    active: true,
+    target: 1
+  }
+
+  (atlas.tag.editor, projection_view)
+  "Camera Controls"
+}
+
+
+

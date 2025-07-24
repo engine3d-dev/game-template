@@ -3,6 +3,9 @@ project(game-template CXX)
 
 set(DATA assets/data)
 set(SCRIPTS assets/scripts)
+set(Modules assets/modules)
+
+add_definitions(-DFLECS_SCRIPT)
 
 build_application(
     SOURCES
@@ -10,14 +13,23 @@ build_application(
     game_world.cpp
     main_scene.cpp
 
-    # Data
-    ${DATA}/camera/editor_controls.hpp
+    ${Modules}/serialization/serializer.cpp
+    ${Modules}/blaze_draco_editor/text_editor.cpp
+
+    ${SCRIPTS}/gui/ui_hierarchy.cpp
+    ${SCRIPTS}/gui/ui_hierarchy.hpp
+    ${SCRIPTS}/gui/ui_properties_panel.cpp
+    ${SCRIPTS}/gui/ui_properties_panel.hpp
+
 
     ${SCRIPTS}/experimental/data_management/schema_manager.cpp
     ${SCRIPTS}/experimental/data_management/schema_manager.hpp
 
     ${SCRIPTS}/experimental/data_management/schemas/schema.cpp
     ${SCRIPTS}/experimental/data_management/schemas/schema.hpp
+
+    ${SCRIPTS}/experimental/data_management/parsing/schema_parser.cpp
+    ${SCRIPTS}/experimental/data_management/parsing/schema_parser.hpp
 
     PACKAGES
     spdlog

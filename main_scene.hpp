@@ -2,10 +2,10 @@
 #include <core/core.hpp>
 #include <core/scene/scene.hpp>
 #include <core/scene/scene_object.hpp>
-#include <physics/physics_3d/physics_engine.hpp>
 #include <string>
 #include <vector>
 #include <core/serialize/serializer.hpp>
+#include <physics/physics_engine.hpp>
 
 /**
  * @name main_scene
@@ -46,26 +46,14 @@ private:
     void reset_objects();
 
 private:
-    atlas::serializer m_deserializer_test;
     atlas::optional_ref<atlas::scene_object> m_viking_room;
     atlas::optional_ref<atlas::scene_object> m_platform;
-    atlas::optional_ref<atlas::scene_object> m_giant_platform;
     
     atlas::optional_ref<atlas::scene_object> m_sphere;
     atlas::optional_ref<atlas::scene_object> m_box;
 
     atlas::optional_ref<atlas::scene_object> m_camera;
-    std::vector<std::vector<std::vector<atlas::strong_ref<atlas::scene_object>>>> m_grouped_spheres;
-    atlas::optional_ref<atlas::scene_object> m_giant_cube1;
-    atlas::optional_ref<atlas::scene_object> m_giant_cube2;
-
-    // Pre-setup that should be handled by atlas::physics_system
-    atlas::optional_ref<atlas::scene_object> m_physics_object_representation_of_settings;
-    atlas::optional_ref<atlas::physics::physics_engine> m_physics_engine_handler;
-
-    // Should be hidden from initializing the physics system entirely
-    std::pmr::polymorphic_allocator<> m_physics_system_allocator;
-    flecs::entity m_selected_entity;
+    atlas::physics::physics_engine m_physics_engine_handler;
 
     bool m_blink_text=false;
     glm::vec3 m_offset_from_camera;

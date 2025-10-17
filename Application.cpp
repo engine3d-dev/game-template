@@ -15,9 +15,10 @@ private:
 namespace atlas {
     ref<application> initialize_application() {
         application_settings settings = {
-            .Name = "game-template",
-            .Width = 1200,
-            .Height = 800,
+            .name = "game-template",
+            .width = 1200,
+            .height = 800,
+            .background_color = {0.f, 0.7f, 1.f, 1.f}
         };
 
         return create_ref<editor_application>(settings);

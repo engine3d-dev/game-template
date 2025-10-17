@@ -1,275 +1,268 @@
 #include "main_scene.hpp"
-#include <core/ui/widgets.hpp>
+#include <core/common.hpp>
+#include <core/math/utilities.hpp>
+#include <core/application.hpp>
 #include <core/event/event.hpp>
-#include <core/utilities/state.hpp>
-#include <core/scene/components.hpp>
-#include <physics/jolt-cpp/jolt_components.hpp>
-#include <physics/jolt-cpp/jolt_collision.hpp>
-#include <physics/physics_3d/physics.hpp>
+#include <drivers/jolt-cpp/jolt_components.hpp>
 
 main_scene::main_scene(const std::string& p_tag)
   : atlas::scene_scope(p_tag) {
 
     m_camera = create_object("camera");
-    auto aspect_ratio = atlas::application::aspect_ratio();
-    atlas::camera camera_comp = atlas::camera(aspect_ratio);
-    camera_comp.Position = {-1.1f, 6.53f, 23.32f};
-    camera_comp.IsMainCamera = true;
 
-    m_camera->set<atlas::camera>(camera_comp);
-
+    // Editor camera creation
+    m_camera->add<flecs::pair<atlas::tag::editor, atlas::projection_view>>();
+    m_camera->set<atlas::transform>({
+        .position = { 2.46f, 4.90f, -34.92f },
+        .rotation = {0.f, 3.08f, 0.f},
+        .scale{ 1.f },
+    });
+    m_camera->set<atlas::perspective_camera>({
+      .plane = { 0.1f, 5000.f },
+      .is_active = true,
+      .field_of_view = 45.f,
+    });
 
     //! @note Creating our objects from our scene
     m_viking_room = create_object("Viking Room Object");
-    atlas::transform sphere_transform = {
-        // .Position{0.f, 0.f, 1.60f},
-        .Position = {-2.70f, 2.70, -8.30f},
-        .Rotation = {2.30f, 95.90f, 91.80f},
-        .Scale{1.f},
-    };
-    m_viking_room->set<atlas::transform>(sphere_transform);
+    m_viking_room->set<atlas::transform>({
+        .position = {7.20f, 2.70f, -1.70f},
+        .rotation = {0.10f, 1.55f, 7.96f},
+        .scale{6.f},
+    });
     m_viking_room->set<atlas::material>({
         .color = {1.f, 1.f, 1.f, 1.f},
         .model_path = "assets/models/viking_room.obj",
         .texture_path = "assets/models/viking_room.png"
     });
 
-    m_viking_room->set<atlas::transform_physics>({
-        .position = sphere_transform.Position,
-        .scale = sphere_transform.Scale,
+    m_viking_room->set<atlas::box_collider>({
+        .half_extent = {6.f, 6.f, 6.f}
     });
-
-    m_viking_room->set<atlas::physics::collider_body>({
-        // .half_extents = {15.f, 0.30f, 10.0f},
-        .half_extents = sphere_transform.Scale
-    });
-    m_viking_room->set<atlas::physics::physics_body>({
-        .body_type = atlas::physics::Dynamic
-    });
-    m_viking_room->set<atlas::physics::collider_body>({
-        .shape_type = atlas::physics::collider_shape::Box,
-        .radius = 1.f,
+    m_viking_room->set<atlas::physics_body>({
+        // .body_type = atlas::dynamic
+        .body_movement_type = atlas::fixed
     });
 
     m_platform = create_object("Platform");
 
     m_platform->set<atlas::transform>({
-        .Position = { 0.f, -10.f, 0.4f },
-        .Scale = {15.f, -0.30f, 10.0f}
+        .scale = { 15.f, 0.30f, 10.0f },
     });
 
     m_platform->set<atlas::material>({
         .color = {1.f, 1.f, 1.f, 1.f},
         .model_path = "assets/models/cube.obj",
-        .texture_path = "assets/models/wallace_gromit_image.jpg"
+        .texture_path = "assets/models/wood.png"
     });
     
-    m_platform->set<atlas::transform_physics>({
-        .position = { 0.f, -10.f, 0.4f },
-        .scale = {15.f, 0.30f, 10.0f},
+    m_platform->set<atlas::physics_body>({
+      .body_movement_type = atlas::fixed,
     });
-
-    m_platform->set<atlas::physics::collider_body>({
-        .half_extents = {15.f, 0.30f, 10.0f},
+    m_platform->set<atlas::box_collider>({
+      .half_extent = { 15.f, 0.30f, 10.0f },
     });
 
     m_sphere = create_object("Sphere");
+    glm::vec3 sphere_scale{1.f};
     m_sphere->set<atlas::transform>({
-        .Position = {-2.70f, 2.70, -8.30f},
-        .Rotation = {2.30f, 95.90f, 91.80f},
-        .Scale{1.f},
+        .position = {-2.70f, 2.70, -8.30f},
+        .rotation = {2.30f, 95.90f, 91.80f},
+        .scale = sphere_scale,
     });
     m_sphere->set<atlas::material>({
         .color{1.f},
         .model_path = "assets/models/sphere.obj",
-        .texture_path = "assets/models/wood.png",
+        // .texture_path = "assets/models/wood.png",
+        // .texture_path = "assets/models/clear.png"
+        .texture_path = "assets/models/wall.jpg"
     });
 
     // Adding physics body
-    // m_sphere->add<atlas::physics::physics_body>();
-    m_sphere->set<atlas::physics::physics_body>({
-        .body_type = atlas::physics::Dynamic
+    m_sphere->set<atlas::physics_body>({
+        .body_movement_type = atlas::dynamic
     });
-    m_sphere->set<atlas::physics::collider_body>({
-        .shape_type = atlas::physics::collider_shape::Sphere,
-        .radius = 1.f,
+    m_sphere->set<atlas::sphere_collider>({
+        .radius = glm::compMax(sphere_scale) * 2.5f,
     });
-    m_sphere->set<atlas::transform_physics>({
-        // .position = {-2.70f, 2.70, -8.30f},
+    m_sphere->set<atlas::transform>({
         .position = {-2.70f, 2.70, -8.30f},
-        // .position{0.f},
         .scale{1.f}
     });
 
+    atlas::strong_ref<atlas::scene_object> cube = create_object("Experiement Cube");
+    cube->set<atlas::transform>({
+        .position = {-2.70f, 3.f, -8.30f},
+        .rotation = {4.0, 0, 0},
+        .scale = {15.f, 15.f, 15.f},
+    });    
+    cube->set<atlas::material>({
+        .color = {1.f, 1.f, 1.f, 1.f},
+        .model_path = "assets/models/cube.obj",
+        .texture_path = "assets/models/wall.jpg"
+    });
 
-
-    // Setting up physics stuff
-    m_physics_object_representation_of_settings = create_object("Physics Settings");
-    // settings is for pre-runtime before runtime gets invoked
-    m_physics_object_representation_of_settings->set<atlas::physics::jolt_settings>({});
-
-    // config is for runtime
-    m_physics_object_representation_of_settings->set<atlas::physics::jolt_config>({});
-
-    atlas::register_update(this, &main_scene::on_update);
+    // game state behavior
+    // registration update callbacks for offloading your own game logic
     atlas::register_start(this, &main_scene::start_game);
+    atlas::register_update(this, &main_scene::on_update);
     atlas::register_physics(this, &main_scene::on_physics_update);
     atlas::register_ui(this, &main_scene::on_ui_update);
 }
 
-void main_scene::start_game() {
-    // Now we instantiate the physics engine itself
-    flecs::world handler = *this;
-    m_physics_engine_handler = atlas::physics::initialize_engine(m_allocator, m_physics_object_representation_of_settings, handler);
+void main_scene::reset_objects() {
+    m_viking_room->set<atlas::transform>({
+        .position = {7.20f, 2.70f, -1.70f},
+        .rotation = {0.10f, 1.55f, 7.96f},
+        .scale{6.f},
+    });
 
-    // atlas::physics::jolt_collision(((flecs::entity)*m_sphere).id());
+    m_sphere->set<atlas::transform>({
+        .position = {-2.70f, 2.70, -8.30f},
+        .scale{1.f}
+    });
+    glm::vec3 sphere_scale{1.f};
+    m_sphere->set<atlas::transform>({
+        .position = {-2.70f, 2.70, -8.30f},
+        .rotation = {2.30f, 95.90f, 91.80f},
+        .scale = sphere_scale,
+    });
+
+
+}
+
+void main_scene::start_game() {
+    // Was only used for testing purpose. Can remove if you want
+    // m_deserializer_test = atlas::serializer();
+    // if(!m_deserializer_test.load("LevelScene", *this)) {
+    //     console_log_error("Cannot load LevelScene!!!");
+    // }
+
+    atlas::physics::jolt_settings settings = {};
+    flecs::world registry = *this;
+    m_physics_engine_handler = atlas::physics::physics_engine(settings, registry);
 }
 
 void main_scene::runtime_start() {
     // runs the physics simulation
     m_physics_is_runtime = true;
 
-    // Setting up sphere transform and convert from euler to quaternions
-    auto physics_sphere_transforms = m_sphere->get<atlas::transform_physics>();
-    auto physics_sphere_rotation = physics_sphere_transforms->rotation;
-    glm::quat quaternion = glm::quat({physics_sphere_rotation.x, physics_sphere_rotation.y, physics_sphere_rotation.z});
-
-    m_sphere->set<atlas::transform>({
-        .Position = glm::highp_vec4(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-        .Rotation = physics_sphere_transforms->rotation,
-        .Scale = physics_sphere_transforms->scale
-    });
-
-
-    // viking room
-    auto viking_room_physics_sphere_transforms = m_viking_room->get<atlas::transform_physics>();
-    auto viking_room_physics_sphere_rotation = viking_room_physics_sphere_transforms->rotation;
-    glm::quat viking_room_quaternion = glm::quat({viking_room_physics_sphere_rotation.x, viking_room_physics_sphere_rotation.y, viking_room_physics_sphere_rotation.z});
-
-    m_viking_room->set<atlas::transform>({
-        .Position = glm::highp_vec4(viking_room_quaternion.x, viking_room_quaternion.y, viking_room_quaternion.z, viking_room_quaternion.w),
-        .Rotation = viking_room_physics_sphere_transforms->rotation,
-        .Scale = viking_room_physics_sphere_transforms->scale
-    });
-
-    m_physics_engine_handler->start_runtime();
+    m_physics_engine_handler.start();
 }
 
 void main_scene::runtime_stop() {
     // stops the physics simulation
     // also does post-cleanup
     m_physics_is_runtime = false;
-    // Setting up sphere transform and convert from euler to quaternions
-    auto physics_sphere_transforms = m_sphere->get<atlas::transform>();
-    auto physics_sphere_rotation = physics_sphere_transforms->Rotation;
-    glm::quat quaternion = glm::quat({physics_sphere_rotation.x, physics_sphere_rotation.y, physics_sphere_rotation.z});
 
-    m_sphere->set<atlas::transform_physics>({
-        .position = glm::highp_vec4(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-        .rotation = physics_sphere_transforms->Rotation,
-        .scale = physics_sphere_transforms->Scale
-    });
+    m_physics_engine_handler.stop();
 
-
-    // viking room
-    auto viking_physics_sphere_transforms = m_viking_room->get<atlas::transform>();
-    auto viking_physics_sphere_rotation = viking_physics_sphere_transforms->Rotation;
-    glm::quat viking_quaternion = glm::quat({viking_physics_sphere_rotation.x, viking_physics_sphere_rotation.y, viking_physics_sphere_rotation.z});
-
-    m_viking_room->set<atlas::transform_physics>({
-        .position = glm::highp_vec4(viking_quaternion.x, viking_quaternion.y, viking_quaternion.z, viking_quaternion.w),
-        .rotation = viking_physics_sphere_transforms->Rotation,
-        .scale = viking_physics_sphere_transforms->Scale
-    });
-
-    m_physics_engine_handler->stop_runtime();
+    reset_objects();
 }
 
 void
 main_scene::on_ui_update() {
-    atlas::transform* t = m_sphere->get_mut<atlas::transform>();
+    // atlas::transform* t = m_viking_room->get_mut<atlas::transform>();
+    // atlas::transform* t = m_camera->get_mut<atlas::transform>();
+    atlas::transform* t = m_platform->get_mut<atlas::transform>();
 
-    atlas::ui::draw_vec3("Position", t->Position);
+
+    atlas::ui::draw_vec3("Rotation", t->rotation);
+    atlas::ui::draw_vec3("Scale", t->scale);
+    atlas::ui::draw_vec3("Position", t->position);
+
+
+
 }
 
 void
 main_scene::on_update() {
-    atlas::camera* camera = m_camera->get_mut<atlas::camera>();
-    float delta_time = atlas::application::delta_time();
+    float smooth_speed = 0.1f;
+    atlas::transform* camera_transform = m_camera->get_mut<atlas::transform>();
+    atlas::transform* sphere_transform = m_sphere->get_mut<atlas::transform>();
 
-    // if (atlas::event::is_key_pressed(key_escape)) {
-    //     atlas::application::get_window().close();
-    // }
+    float dt = atlas::application::delta_time();
+    float movement_speed = 10.f;
+    float rotation_speed = 1.f;
+    float velocity = movement_speed * dt;
+    float rotation_velocity = rotation_speed * dt;
+    glm::quat quaternion = atlas::to_quat(camera_transform->quaternion);
+    glm::vec3 up = glm::rotate(quaternion, glm::vec3(0.f, 1.f, 0.f));
+    glm::vec3 forward = glm::rotate(quaternion, glm::vec3(0.f, 0.f, -1.f));
+    glm::vec3 right = glm::rotate(quaternion, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    if (atlas::event::is_key_pressed(key_left_shift)) {
+        if (atlas::event::is_mouse_pressed(mouse_button_middle)) {
+            camera_transform->position += up * velocity;
+        }
+
+        if (atlas::event::is_mouse_pressed(mouse_button_right)) {
+            camera_transform->position -= up * velocity;
+        }
+    }
 
     if (atlas::event::is_key_pressed(key_w)) {
-        // console_log_trace(""
-        camera->process_keyboard(atlas::forward, delta_time);
+        camera_transform->position += forward * velocity;
     }
     if (atlas::event::is_key_pressed(key_s)) {
-        camera->process_keyboard(atlas::backward, delta_time);
+        camera_transform->position -= forward * velocity;
+    }
+
+    if (atlas::event::is_key_pressed(key_d)) {
+        camera_transform->position += right * velocity;
     }
     if (atlas::event::is_key_pressed(key_a)) {
-        camera->process_keyboard(atlas::left, delta_time);
+        camera_transform->position -= right * velocity;
     }
-    if (atlas::event::is_key_pressed(key_d)) {
-        camera->process_keyboard(atlas::right, delta_time);
-    }
+
     if (atlas::event::is_key_pressed(key_q)) {
-        camera->process_keyboard(atlas::up, delta_time);
+        camera_transform->rotation.y += rotation_velocity;
     }
     if (atlas::event::is_key_pressed(key_e)) {
-        camera->process_keyboard(atlas::down, delta_time);
+        camera_transform->rotation.y -= rotation_velocity;
     }
 
-    //! @note Press shift key to move using the mouse to rotate around
-    if (atlas::event::is_key_pressed(key_left_shift)) {
-        if (atlas::event::is_mouse_pressed(mouse_button_right)) {
-            glm::vec2 cursor_pos = atlas::event::cursor_position();
-
-            float x_offset = cursor_pos.x;
-            float velocity = x_offset * delta_time;
-            camera->process_mouse_movement(-velocity, 0.f);
-        }
-
-        if (atlas::event::is_mouse_pressed(mouse_button_left)) {
-            glm::vec2 cursor_pos = atlas::event::cursor_position();
-
-            float x_offset = cursor_pos.x;
-            float velocity = x_offset * delta_time;
-            camera->process_mouse_movement(velocity, 0.f);
-        }
-
-        if (atlas::event::is_mouse_pressed(mouse_button_middle)) {
-            glm::vec2 cursor_pos = atlas::event::cursor_position();
-
-            float velocity = cursor_pos.y * delta_time;
-            camera->process_mouse_movement(0.f, velocity);
-        }
-
-        if (atlas::event::is_key_pressed(key_space)) {
-            glm::vec2 cursor_pos = atlas::event::cursor_position();
-            float velocity = cursor_pos.y * delta_time;
-            camera->process_mouse_movement(0.f, -velocity);
-        }
-    }
-    camera->update_proj_view();
+    camera_transform->set_rotation(camera_transform->rotation);
 }
 
 void
 main_scene::on_physics_update() {
+    float dt = atlas::application::delta_time();
+    atlas::physics_body* sphere_body = m_sphere->get_mut<atlas::physics_body>();
 
-    // TEMPORARY -- Since this needs to be integrated still
     if (atlas::event::is_key_pressed(key_r) and !m_physics_is_runtime) {
         runtime_start();
     }
 
     if(m_physics_is_runtime) {
-        m_physics_engine_handler->physics_step();
-        m_physics_engine_handler->run_contact_add();
+        m_physics_engine_handler.update(dt);
     }
 
     if (atlas::event::is_key_pressed(key_l) and m_physics_is_runtime) {
         runtime_stop();
     }
 
+    // U = +up
+    // J = -up
+    // H = +left
+    // L = -Left
+    if(atlas::event::is_key_pressed(key_u)) {
+        glm::vec3 angular_vel = {0.f, 1.f, 0.f};
+        sphere_body->angular_velocity = angular_vel;
+    }
+
+    if(atlas::event::is_key_pressed(key_j)) {
+        glm::vec3 angular_vel = {0.f, -1.f, 0.f};
+        sphere_body->angular_velocity = angular_vel;
+    }
+
+    if(atlas::event::is_key_pressed(key_h)) {
+        glm::vec3 angular_vel = {1.f, 0.f, 0.f};
+        sphere_body->angular_velocity = angular_vel;
+    }
+
+    if(atlas::event::is_key_pressed(key_l)) {
+        glm::vec3 angular_vel = {-1.f, 0.f, 0.f};
+        sphere_body->angular_velocity = angular_vel;
+    }
 }

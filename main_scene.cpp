@@ -4,9 +4,10 @@
 #include <core/application.hpp>
 #include <core/event/event.hpp>
 #include <drivers/jolt-cpp/jolt_components.hpp>
+#include <any>
 
-main_scene::main_scene(const std::string& p_tag)
-  : atlas::scene_scope(p_tag) {
+main_scene::main_scene(const std::string& p_tag, atlas::event::event_bus& p_bus)
+  : atlas::scene_scope(p_tag, p_bus) {
 
     m_camera = create_object("camera");
 
@@ -102,6 +103,10 @@ main_scene::main_scene(const std::string& p_tag)
         .texture_path = "assets/models/wall.jpg"
     });
 
+
+    // subscription example
+    subscribe<atlas::event::collision_enter>(this, &main_scene::collision_enter);
+
     // game state behavior
     // registration update callbacks for offloading your own game logic
     atlas::register_start(this, &main_scene::start_game);
@@ -131,6 +136,18 @@ void main_scene::reset_objects() {
 
 }
 
+void main_scene::collision_enter(atlas::event::collision_enter& p_event) {
+    console_log_warn("Collision Enter happened!!! Executed from main_scene::collision_enter");
+
+    flecs::world registry = *this;
+
+    flecs::entity e1 = registry.entity(p_event.entity1);
+    flecs::entity e2 = registry.entity(p_event.entity2);
+
+    console_log_warn("Entity1 = {}", e1.name().c_str());
+    console_log_warn("Entity2 = {}", e2.name().c_str());
+}
+
 void main_scene::start_game() {
     // Was only used for testing purpose. Can remove if you want
     // m_deserializer_test = atlas::serializer();
@@ -140,7 +157,7 @@ void main_scene::start_game() {
 
     atlas::physics::jolt_settings settings = {};
     flecs::world registry = *this;
-    m_physics_engine_handler = atlas::physics::physics_engine(settings, registry);
+    m_physics_engine_handler = atlas::physics::physics_engine(settings, registry, *event_handle());
 }
 
 void main_scene::runtime_start() {

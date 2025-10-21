@@ -6,6 +6,8 @@
 #include <vector>
 #include <core/serialize/serializer.hpp>
 #include <physics/physics_engine.hpp>
+#include <core/event/event_bus.hpp>
+#include <core/event/types.hpp>
 
 /**
  * @name main_scene
@@ -16,7 +18,7 @@
  */
 class main_scene : public atlas::scene_scope {
 public:
-    main_scene(const std::string& p_tag);
+    main_scene(const std::string& p_tag, atlas::event::event_bus& p_bus);
 
     ~main_scene()  = default;
 
@@ -33,6 +35,9 @@ public:
     //! TODO: Remove this and integrate a few functions into LevelScene such as
     //! on_runtime_start/on_runtime_stop
     void on_physics_update();
+
+
+    void collision_enter(atlas::event::collision_enter& p_event);
 
 
 private:
